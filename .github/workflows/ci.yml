@@ -1,0 +1,36 @@
+# This workflow will build a Swift project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-swift
+
+name: Swift
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  macOS:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build
+      run: swift build -v
+    - name: Tests
+      run: swift test -v
+  iPhone:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build
+      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild build-for-testing -scheme Inspect -destination "platform=iOS Simulator,OS=latest,name=iPhone 14" | xcpretty
+    - name: Tests
+      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild test-without-building -scheme Inspect -destination "platform=iOS Simulator,OS=latest,name=iPhone 14" | xcpretty
+  iPad:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build
+      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild build-for-testing -scheme Inspect -destination "platform=iOS Simulator,OS=latest,name=iPad (10th generation)" | xcpretty
+    - name: Tests
+      run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild test-without-building -scheme Inspect -destination "platform=iOS Simulator,OS=latest,name=iPad (10th generation)" | xcpretty
